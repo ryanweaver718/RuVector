@@ -1506,6 +1506,12 @@
         async function initPoseDetector() {
             try {
                 poseLog('Loading MoveNet model...');
+
+                // Force WebGL backend (more compatible than WebGPU)
+                await tf.setBackend('webgl');
+                await tf.ready();
+                poseLog(`Using TF.js backend: ${tf.getBackend()}`);
+
                 const model = poseDetection.SupportedModels.MoveNet;
                 const detectorConfig = {
                     modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
@@ -1516,6 +1522,7 @@
                 return true;
             } catch (error) {
                 poseLog(`Failed to load MoveNet: ${error.message}`, 'warning');
+                console.error('Pose detection error:', error);
                 return false;
             }
         }
