@@ -2772,14 +2772,32 @@ async function gestureLoop() {
 
         if (startMotionBtn) {
             startMotionBtn.onclick = async () => {
+                if (!embedder) {
+                    alert('WASM not loaded yet. Please wait.');
+                    return;
+                }
                 try {
-                    motionStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
+                    motionStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240, facingMode: 'user' } });
                     motionVideo.srcObject = motionStream;
+                    // Wait for video to be ready
+                    await new Promise(resolve => {
+                        motionVideo.onloadedmetadata = () => {
+                            motionVideo.play();
+                            resolve();
+                        };
+                    });
+                    // Give camera time to warm up
+                    await new Promise(r => setTimeout(r, 500));
                     motionRunning = true;
+                    lastMotionEmbedding = null;
                     startMotionBtn.classList.add('hidden');
                     stopMotionBtn.classList.remove('hidden');
+                    console.log('[Motion] Started detection');
                     detectMotion();
-                } catch (e) { console.error('Motion camera error:', e); }
+                } catch (e) {
+                    console.error('Motion camera error:', e);
+                    alert('Camera access denied: ' + e.message);
+                }
             };
         }
 
@@ -2791,33 +2809,62 @@ async function gestureLoop() {
                 startMotionBtn.classList.remove('hidden');
                 stopMotionBtn.classList.add('hidden');
                 lastMotionEmbedding = null;
+                console.log('[Motion] Stopped detection');
             };
         }
 
         function detectMotion() {
-            if (!motionRunning || !embedder) return;
-            const canvas = document.createElement('canvas');
-            canvas.width = 224; canvas.height = 224;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(motionVideo, 0, 0, 224, 224);
-            const imageData = ctx.getImageData(0, 0, 224, 224);
-            const rgb = new Uint8Array(224 * 224 * 3);
-            for (let i = 0, j = 0; i < imageData.data.length; i += 4, j += 3) {
-                rgb[j] = imageData.data[i]; rgb[j+1] = imageData.data[i+1]; rgb[j+2] = imageData.data[i+2];
+            if (!motionRunning || !embedder || !motionStream) {
+                console.log('[Motion] Skipping - not ready');
+                return;
             }
-            const embedding = embedder.extract(rgb, 224, 224);
 
-            if (lastMotionEmbedding) {
-                const similarity = embedder.cosine_similarity(embedding, lastMotionEmbedding);
-                const change = Math.max(0, (1 - similarity) * 5); // Amplify change
-                const changePercent = Math.min(100, change * 100).toFixed(0);
-                motionScore.textContent = changePercent + '%';
-                motionBar.style.width = changePercent + '%';
-                motionBadge.textContent = change > 0.3 ? 'Motion!' : 'No Motion';
-                motionBadge.style.background = change > 0.3 ? 'hsl(var(--warning))' : 'hsl(var(--success))';
+            // Check video is actually playing
+            if (motionVideo.readyState < 2 || motionVideo.videoWidth === 0) {
+                console.log('[Motion] Video not ready, retrying...');
+                setTimeout(detectMotion, 200);
+                return;
             }
-            lastMotionEmbedding = embedding;
-            setTimeout(detectMotion, 100);
+
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 224; canvas.height = 224;
+                const ctx = canvas.getContext('2d');
+                // Center crop the video
+                const vw = motionVideo.videoWidth, vh = motionVideo.videoHeight;
+                const size = Math.min(vw, vh);
+                ctx.drawImage(motionVideo, (vw-size)/2, (vh-size)/2, size, size, 0, 0, 224, 224);
+                const imageData = ctx.getImageData(0, 0, 224, 224);
+                const rgb = new Uint8Array(224 * 224 * 3);
+                for (let i = 0, j = 0; i < imageData.data.length; i += 4, j += 3) {
+                    rgb[j] = imageData.data[i]; rgb[j+1] = imageData.data[i+1]; rgb[j+2] = imageData.data[i+2];
+                }
+                const embedding = embedder.extract(rgb, 224, 224);
+
+                if (lastMotionEmbedding) {
+                    const similarity = embedder.cosine_similarity(embedding, lastMotionEmbedding);
+                    // More sensitive: (1 - similarity) ranges 0-2 typically, amplify to 0-100%
+                    const change = (1 - similarity) * 10; // Increased amplification
+                    const changePercent = Math.min(100, Math.max(0, change * 100)).toFixed(0);
+
+                    if (motionScore) motionScore.textContent = changePercent + '%';
+                    if (motionBar) motionBar.style.width = changePercent + '%';
+
+                    // Threshold for motion detection
+                    const hasMotion = change > 0.15; // Lower threshold = more sensitive
+                    if (motionBadge) {
+                        motionBadge.textContent = hasMotion ? 'Motion!' : 'No Motion';
+                        motionBadge.style.background = hasMotion ? 'hsl(0, 62%, 50%)' : 'hsl(142, 76%, 36%)';
+                    }
+                }
+                lastMotionEmbedding = embedding;
+            } catch (e) {
+                console.error('[Motion] Error:', e);
+            }
+
+            if (motionRunning) {
+                setTimeout(detectMotion, 150); // ~6-7 FPS for motion detection
+            }
         }
 
         // A/B Comparison Demo
