@@ -84,6 +84,14 @@ const QUANTIZED_MODELS: Record<string, {
     dimension: 384,
     maxLength: 512,
   },
+  'bge-large-en-v1.5': {
+    onnx: 'https://huggingface.co/BAAI/bge-large-en-v1.5/resolve/main/onnx/model.onnx',
+    fp16: 'https://huggingface.co/Xenova/bge-large-en-v1.5/resolve/main/onnx/model_fp16.onnx',
+    int8: 'https://huggingface.co/Xenova/bge-large-en-v1.5/resolve/main/onnx/model_quantized.onnx',
+    tokenizer: 'https://huggingface.co/BAAI/bge-large-en-v1.5/resolve/main/tokenizer.json',
+    dimension: 1024,
+    maxLength: 512,
+  },
 };
 
 // ============================================================================
@@ -182,11 +190,11 @@ export class OptimizedOnnxEmbedder {
   // Stats
   private totalEmbeds = 0;
   private totalTimeMs = 0;
-  private dimension = 384;
+  private dimension = 1024;
 
   constructor(config: OptimizedOnnxConfig = {}) {
     this.config = {
-      modelId: config.modelId ?? 'all-MiniLM-L6-v2',
+      modelId: config.modelId ?? 'bge-large-en-v1.5',
       useQuantized: config.useQuantized ?? true,
       quantization: config.quantization ?? 'fp16',
       maxLength: config.maxLength ?? 256,

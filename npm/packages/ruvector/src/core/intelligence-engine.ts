@@ -176,9 +176,9 @@ export class IntelligenceEngine {
   private episodeBatchQueue: BatchEpisode[] = [];
 
   constructor(config: IntelligenceConfig = {}) {
-    // If ONNX is enabled, use 384 dimensions (MiniLM default)
+    // If ONNX is enabled, use 1024 dimensions (bge-large default)
     const useOnnx = !!(config.enableOnnx && isOnnxAvailable());
-    const embeddingDim = useOnnx ? 384 : (config.embeddingDim ?? 256);
+    const embeddingDim = useOnnx ? 1024 : (config.embeddingDim ?? 256);
 
     this.config = {
       embeddingDim,

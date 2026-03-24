@@ -995,7 +995,7 @@ export class AdaptiveEmbedder {
    */
   getStats(): AdaptiveStats {
     return {
-      baseModel: 'all-MiniLM-L6-v2',
+      baseModel: 'bge-large-en-v1.5',
       dimension: this.dimension,
       loraRank: this.config.loraRank,
       loraParams: this.lora.getParams(),

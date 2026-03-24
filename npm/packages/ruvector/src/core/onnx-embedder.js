@@ -96,7 +96,7 @@ let isInitialized = false;
 let parallelEnabled = false;
 let parallelThreshold = 4;
 // Default model
-const DEFAULT_MODEL = 'all-MiniLM-L6-v2';
+const DEFAULT_MODEL = 'bge-large-en-v1.5';
 /**
  * Check if ONNX embedder is available (bundled files exist)
  */
@@ -288,7 +288,7 @@ async function embedBatch(texts) {
     if (parallelEnabled && parallelEmbedder && texts.length >= parallelThreshold) {
         const batchResults = await parallelEmbedder.embedBatch(texts);
         const totalTime = performance.now() - start;
-        const dimension = parallelEmbedder.dimension || 384;
+        const dimension = parallelEmbedder.dimension || 1024;
         return batchResults.map((emb) => ({
             embedding: Array.from(emb),
             dimension,

@@ -166,9 +166,9 @@ class OptimizedOnnxEmbedder {
         // Stats
         this.totalEmbeds = 0;
         this.totalTimeMs = 0;
-        this.dimension = 384;
+        this.dimension = 1024;
         this.config = {
-            modelId: config.modelId ?? 'all-MiniLM-L6-v2',
+            modelId: config.modelId ?? 'bge-large-en-v1.5',
             useQuantized: config.useQuantized ?? true,
             quantization: config.quantization ?? 'fp16',
             maxLength: config.maxLength ?? 256,

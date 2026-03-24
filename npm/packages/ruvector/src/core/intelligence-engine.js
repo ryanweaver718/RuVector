@@ -91,7 +91,7 @@ class IntelligenceEngine {
         this.episodeBatchQueue = [];
         // If ONNX is enabled, use 384 dimensions (MiniLM default)
         const useOnnx = !!(config.enableOnnx && (0, onnx_embedder_1.isOnnxAvailable)());
-        const embeddingDim = useOnnx ? 384 : (config.embeddingDim ?? 256);
+        const embeddingDim = useOnnx ? 1024 : (config.embeddingDim ?? 256);
         this.config = {
             embeddingDim,
             maxMemories: config.maxMemories ?? 100000,

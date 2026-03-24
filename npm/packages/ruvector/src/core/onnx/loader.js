@@ -43,9 +43,18 @@ export const MODELS = {
         dimension: 768,
         maxLength: 512,
         size: '110MB',
-        description: 'Best overall quality',
+        description: 'High quality, balanced',
         model: 'https://huggingface.co/BAAI/bge-base-en-v1.5/resolve/main/onnx/model.onnx',
         tokenizer: 'https://huggingface.co/BAAI/bge-base-en-v1.5/resolve/main/tokenizer.json',
+    },
+    'bge-large-en-v1.5': {
+        name: 'bge-large-en-v1.5',
+        dimension: 1024,
+        maxLength: 512,
+        size: '330MB',
+        description: 'Best open-source quality',
+        model: 'https://huggingface.co/BAAI/bge-large-en-v1.5/resolve/main/onnx/model.onnx',
+        tokenizer: 'https://huggingface.co/BAAI/bge-large-en-v1.5/resolve/main/tokenizer.json',
     },
 
     // E5 Models - Microsoft
@@ -74,7 +83,7 @@ export const MODELS = {
 /**
  * Default model for quick start
  */
-export const DEFAULT_MODEL = 'all-MiniLM-L6-v2';
+export const DEFAULT_MODEL = 'bge-large-en-v1.5';
 
 /**
  * Model loader with caching support
