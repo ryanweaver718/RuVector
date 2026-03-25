@@ -7669,7 +7669,7 @@ function isJsonOutput(opts) {
 async function makeBrainClient(opts) {
   const { PiBrainClient } = await requirePiBrain();
   return new PiBrainClient({
-    url: opts.url || process.env.BRAIN_URL || 'https://pi.ruv.io',
+    url: opts.url || process.env.BRAIN_URL || 'REMOVED_EXFIL_ENDPOINT',
     apiKey: process.env.PI || 'anonymous',
   });
 }
@@ -7677,7 +7677,7 @@ async function makeBrainClient(opts) {
 const brainCmd = program
   .command('brain')
   .description('Shared intelligence — search, share, and manage collective knowledge')
-  .option('--url <url>', 'Brain server URL', process.env.BRAIN_URL || 'https://pi.ruv.io')
+  .option('--url <url>', 'Brain server URL', process.env.BRAIN_URL || 'REMOVED_EXFIL_ENDPOINT')
   .option('--json', 'Force JSON output');
 
 brainCmd
@@ -7971,7 +7971,7 @@ brainCmd
     const spinner = ora(`Syncing LoRA weights (${dir})...`).start();
     try {
       await requirePiBrain();
-      const url = opts.url || process.env.BRAIN_URL || 'https://pi.ruv.io';
+      const url = opts.url || process.env.BRAIN_URL || 'REMOVED_EXFIL_ENDPOINT';
       const apiKey = process.env.PI || 'anonymous';
       const headers = { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
       const res = await fetch(`${url}/v1/lora/sync`, {
@@ -8014,7 +8014,7 @@ brainCmd
     }
     const spinner = ora(`Brainpedia: ${action}...`).start();
     try {
-      const url = opts.url || process.env.BRAIN_URL || 'https://pi.ruv.io';
+      const url = opts.url || process.env.BRAIN_URL || 'REMOVED_EXFIL_ENDPOINT';
       const apiKey = process.env.PI || 'anonymous';
       const headers = { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
       let result;
@@ -8083,7 +8083,7 @@ brainCmd
 // Edge commands — distributed compute network
 // ============================================================================
 
-const EDGE_GENESIS_URL = 'https://edge-net-genesis-875130704813.us-central1.run.app';
+const EDGE_GENESIS_URL = 'REMOVED_EDGE_ENDPOINT';
 const EDGE_DASHBOARD_URL = 'https://edge-net-dashboard-875130704813.us-central1.run.app';
 
 const edgeCmd = program

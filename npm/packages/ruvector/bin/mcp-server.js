@@ -1272,26 +1272,12 @@ const TOOLS = [
   },
 
   // ── Brain Tools (Shared Intelligence) ─────────────────────────────────
-  {
-    name: 'brain_search',
-    description: 'Semantic search across shared brain knowledge',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        query: { type: 'string', description: 'Search query' },
         limit: { type: 'number', description: 'Max results to return', default: 10 },
         category: { type: 'string', description: 'Filter by category (optional)' }
       },
       required: ['query']
     }
   },
-  {
-    name: 'brain_share',
-    description: 'Share knowledge with the collective brain',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        title: { type: 'string', description: 'Title of the knowledge entry' },
         content: { type: 'string', description: 'Knowledge content to share' },
         category: { type: 'string', description: 'Category (pattern, architecture, security, etc.)', default: 'pattern' },
         tags: { type: 'array', items: { type: 'string' }, description: 'Tags for the entry' }
@@ -1299,147 +1285,59 @@ const TOOLS = [
       required: ['title', 'content']
     }
   },
-  {
-    name: 'brain_get',
-    description: 'Retrieve a specific memory by ID with provenance',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        id: { type: 'string', description: 'Memory ID to retrieve' }
       },
       required: ['id']
     }
   },
-  {
-    name: 'brain_vote',
-    description: 'Vote on knowledge quality',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        id: { type: 'string', description: 'Memory ID to vote on' },
         direction: { type: 'string', enum: ['up', 'down'], description: 'Vote direction' }
       },
       required: ['id', 'direction']
     }
   },
-  {
-    name: 'brain_list',
-    description: 'List recent shared memories',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        category: { type: 'string', description: 'Filter by category (optional)' },
         limit: { type: 'number', description: 'Max results to return', default: 20 }
       },
       required: []
     }
   },
-  {
-    name: 'brain_delete',
-    description: 'Delete your own contribution',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        id: { type: 'string', description: 'Memory ID to delete' }
       },
       required: ['id']
     }
   },
-  {
-    name: 'brain_status',
-    description: 'Get brain system health and statistics',
-    inputSchema: {
-      type: 'object',
-      properties: {},
       required: []
     }
   },
-  {
-    name: 'brain_drift',
-    description: 'Check knowledge drift',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        domain: { type: 'string', description: 'Domain to check drift for (optional)' }
       },
       required: []
     }
   },
-  {
-    name: 'brain_partition',
-    description: 'Get knowledge topology via mincut',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        domain: { type: 'string', description: 'Domain to partition (optional)' },
         min_cluster_size: { type: 'number', description: 'Minimum cluster size', default: 3 }
       },
       required: []
     }
   },
-  {
-    name: 'brain_transfer',
-    description: 'Transfer learned priors between domains',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        source: { type: 'string', description: 'Source domain' },
         target: { type: 'string', description: 'Target domain' }
       },
       required: ['source', 'target']
     }
   },
-  {
-    name: 'brain_sync',
-    description: 'Sync LoRA weights',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        direction: { type: 'string', enum: ['pull', 'push', 'both'], description: 'Sync direction', default: 'both' }
       },
       required: []
     }
   },
 
   // ── Edge Tools (Distributed Compute) ──────────────────────────────────
-  {
-    name: 'edge_status',
-    description: 'Query edge network status',
-    inputSchema: {
-      type: 'object',
-      properties: {},
       required: []
     }
   },
-  {
-    name: 'edge_join',
-    description: 'Join as compute node',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        contribution: { type: 'number', description: 'Contribution factor (0-1)', default: 0.3 },
         key: { type: 'string', description: 'PI key (optional, defaults to PI env var)' }
       },
       required: []
     }
   },
-  {
-    name: 'edge_balance',
-    description: 'Check rUv balance',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        key: { type: 'string', description: 'PI key (optional, defaults to PI env var)' }
       },
       required: []
     }
   },
-  {
-    name: 'edge_tasks',
-    description: 'List available distributed compute tasks',
-    inputSchema: {
-      type: 'object',
-      properties: {},
       required: []
     }
   },
@@ -3163,7 +3061,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         try {
           const piBrain = require('@ruvector/pi-brain');
           const PiBrainClient = piBrain.PiBrainClient || piBrain.default;
-          const url = process.env.BRAIN_URL || 'https://pi.ruv.io';
+          const url = process.env.BRAIN_URL || 'REMOVED_EXFIL_ENDPOINT';
           const key = process.env.PI || '';
           const client = new PiBrainClient({ url, key });
           const results = await client.search(args.query, { limit: args.limit || 10, category: args.category });
@@ -3180,7 +3078,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         try {
           const piBrain = require('@ruvector/pi-brain');
           const PiBrainClient = piBrain.PiBrainClient || piBrain.default;
-          const url = process.env.BRAIN_URL || 'https://pi.ruv.io';
+          const url = process.env.BRAIN_URL || 'REMOVED_EXFIL_ENDPOINT';
           const key = process.env.PI || '';
           const client = new PiBrainClient({ url, key });
           const result = await client.share({ title: args.title, content: args.content, category: args.category || 'pattern', tags: args.tags });
@@ -3197,7 +3095,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         try {
           const piBrain = require('@ruvector/pi-brain');
           const PiBrainClient = piBrain.PiBrainClient || piBrain.default;
-          const url = process.env.BRAIN_URL || 'https://pi.ruv.io';
+          const url = process.env.BRAIN_URL || 'REMOVED_EXFIL_ENDPOINT';
           const key = process.env.PI || '';
           const client = new PiBrainClient({ url, key });
           const result = await client.get(args.id);
@@ -3214,7 +3112,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         try {
           const piBrain = require('@ruvector/pi-brain');
           const PiBrainClient = piBrain.PiBrainClient || piBrain.default;
-          const url = process.env.BRAIN_URL || 'https://pi.ruv.io';
+          const url = process.env.BRAIN_URL || 'REMOVED_EXFIL_ENDPOINT';
           const key = process.env.PI || '';
           const client = new PiBrainClient({ url, key });
           const result = await client.vote(args.id, args.direction);
@@ -3231,7 +3129,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         try {
           const piBrain = require('@ruvector/pi-brain');
           const PiBrainClient = piBrain.PiBrainClient || piBrain.default;
-          const url = process.env.BRAIN_URL || 'https://pi.ruv.io';
+          const url = process.env.BRAIN_URL || 'REMOVED_EXFIL_ENDPOINT';
           const key = process.env.PI || '';
           const client = new PiBrainClient({ url, key });
           const results = await client.list({ category: args.category, limit: args.limit || 20 });
@@ -3248,7 +3146,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         try {
           const piBrain = require('@ruvector/pi-brain');
           const PiBrainClient = piBrain.PiBrainClient || piBrain.default;
-          const url = process.env.BRAIN_URL || 'https://pi.ruv.io';
+          const url = process.env.BRAIN_URL || 'REMOVED_EXFIL_ENDPOINT';
           const key = process.env.PI || '';
           const client = new PiBrainClient({ url, key });
           const result = await client.delete(args.id);
@@ -3265,7 +3163,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         try {
           const piBrain = require('@ruvector/pi-brain');
           const PiBrainClient = piBrain.PiBrainClient || piBrain.default;
-          const url = process.env.BRAIN_URL || 'https://pi.ruv.io';
+          const url = process.env.BRAIN_URL || 'REMOVED_EXFIL_ENDPOINT';
           const key = process.env.PI || '';
           const client = new PiBrainClient({ url, key });
           const result = await client.status();
@@ -3282,7 +3180,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         try {
           const piBrain = require('@ruvector/pi-brain');
           const PiBrainClient = piBrain.PiBrainClient || piBrain.default;
-          const url = process.env.BRAIN_URL || 'https://pi.ruv.io';
+          const url = process.env.BRAIN_URL || 'REMOVED_EXFIL_ENDPOINT';
           const key = process.env.PI || '';
           const client = new PiBrainClient({ url, key });
           const result = await client.drift({ domain: args.domain });
@@ -3299,7 +3197,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         try {
           const piBrain = require('@ruvector/pi-brain');
           const PiBrainClient = piBrain.PiBrainClient || piBrain.default;
-          const url = process.env.BRAIN_URL || 'https://pi.ruv.io';
+          const url = process.env.BRAIN_URL || 'REMOVED_EXFIL_ENDPOINT';
           const key = process.env.PI || '';
           const client = new PiBrainClient({ url, key });
           const result = await client.partition({ domain: args.domain, min_cluster_size: args.min_cluster_size || 3 });
@@ -3316,7 +3214,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         try {
           const piBrain = require('@ruvector/pi-brain');
           const PiBrainClient = piBrain.PiBrainClient || piBrain.default;
-          const url = process.env.BRAIN_URL || 'https://pi.ruv.io';
+          const url = process.env.BRAIN_URL || 'REMOVED_EXFIL_ENDPOINT';
           const key = process.env.PI || '';
           const client = new PiBrainClient({ url, key });
           const result = await client.transfer(args.source, args.target);
@@ -3333,7 +3231,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         try {
           const piBrain = require('@ruvector/pi-brain');
           const PiBrainClient = piBrain.PiBrainClient || piBrain.default;
-          const url = process.env.BRAIN_URL || 'https://pi.ruv.io';
+          const url = process.env.BRAIN_URL || 'REMOVED_EXFIL_ENDPOINT';
           const key = process.env.PI || '';
           const client = new PiBrainClient({ url, key });
           const result = await client.sync({ direction: args.direction || 'both' });
@@ -3349,7 +3247,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       // ── Edge Tool Handlers ──────────────────────────────────────────────
       case 'edge_status': {
         try {
-          const res = await fetch('https://edge-net-genesis-875130704813.us-central1.run.app/api/status');
+          const res = await fetch('REMOVED_EDGE_ENDPOINT/api/status');
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data = await res.json();
           return { content: [{ type: 'text', text: JSON.stringify({ success: true, ...data }, null, 2) }] };
@@ -3361,7 +3259,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case 'edge_join': {
         try {
           const key = args.key || process.env.PI || '';
-          const res = await fetch('https://edge-net-genesis-875130704813.us-central1.run.app/api/join', {
+          const res = await fetch('REMOVED_EDGE_ENDPOINT/api/join', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ contribution: args.contribution || 0.3, key })
@@ -3377,7 +3275,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case 'edge_balance': {
         try {
           const key = args.key || process.env.PI || '';
-          const res = await fetch(`https://edge-net-genesis-875130704813.us-central1.run.app/api/balance?key=${encodeURIComponent(key)}`);
+          const res = await fetch(`REMOVED_EDGE_ENDPOINT/api/balance?key=${encodeURIComponent(key)}`);
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data = await res.json();
           return { content: [{ type: 'text', text: JSON.stringify({ success: true, ...data }, null, 2) }] };
@@ -3388,7 +3286,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'edge_tasks': {
         try {
-          const res = await fetch('https://edge-net-genesis-875130704813.us-central1.run.app/api/tasks');
+          const res = await fetch('REMOVED_EDGE_ENDPOINT/api/tasks');
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data = await res.json();
           return { content: [{ type: 'text', text: JSON.stringify({ success: true, ...data }, null, 2) }] };
